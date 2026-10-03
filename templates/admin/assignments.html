@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}All Assignments - Admin Portal{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-1">System Assignments</h2>
+        <p class="text-muted mb-0">Overview of all OpenSearch assignments created across all evaluators.</p>
+    </div>
+</div>
+
+<div class="card card-custom border-0 shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Title</th>
+                        <th>OpenSearch Topic</th>
+                        <th>Creator (Evaluator)</th>
+                        <th>Total Marks</th>
+                        <th>Deadline</th>
+                        <th class="text-end pe-4">Total Submissions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for a in assignments %}
+                        <tr>
+                            <td class="ps-4">
+                                <div class="fw-bold text-dark">{{ a.title }}</div>
+                                <small class="text-muted">{{ a.description[:70] }}...</small>
+                            </td>
+                            <td><span class="badge badge-topic">{{ a.topic }}</span></td>
+                            <td><span class="fw-semibold text-secondary">{{ a.creator.username }}</span></td>
+                            <td><span class="fw-bold text-dark">{{ a.total_marks }}</span> pts</td>
+                            <td><small class="text-muted">{{ a.deadline.strftime('%b %d, %Y %H:%M') }}</small></td>
+                            <td class="text-end pe-4">
+                                <span class="badge bg-light text-dark border px-3 py-2">
+                                    {{ a.submissions|length }} Submissions
+                                </span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

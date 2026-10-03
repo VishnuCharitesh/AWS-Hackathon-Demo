@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}Submissions - Evaluator Portal{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-1">Student Submissions</h2>
+        <p class="text-muted mb-0">Review submitted OpenSearch solutions and grade student work.</p>
+    </div>
+</div>
+
+<div class="card card-custom border-0 shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Student</th>
+                        <th>Assignment</th>
+                        <th>Topic</th>
+                        <th>Submitted At</th>
+                        <th>Status</th>
+                        <th>Score & %</th>
+                        <th class="text-end pe-4">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if submissions %}
+                        {% for sub in submissions %}
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="fw-bold text-dark">{{ sub.student.username }}</div>
+                                    <small class="text-muted">{{ sub.student.email }}</small>
+                                </td>
+                                <td>
+                                    <span class="fw-semibold text-dark">{{ sub.assignment.title }}</span>
+                                    <small class="text-muted d-block">Max: {{ sub.assignment.total_marks }} pts</small>
+                                </td>
+                                <td><span class="badge badge-topic">{{ sub.assignment.topic }}</span></td>
+                                <td><small class="text-muted">{{ sub.submitted_at.strftime('%b %d, %Y %H:%M') }}</small></td>
+                                <td>
+                                    {% if sub.status == 'Evaluated' %}
+                                        <span class="badge badge-evaluated"><i class="fa-solid fa-square-check me-1"></i> Evaluated</span>
+                                    {% else %}
+                                        <span class="badge badge-pending"><i class="fa-solid fa-clock me-1"></i> Pending</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if sub.status == 'Evaluated' %}
+                                        <strong class="text-dark">{{ sub.evaluation.score }} / {{ sub.assignment.total_marks }}</strong>
+                                        <small class="text-success d-block fw-bold">({{ sub.evaluation.percentage }}%)</small>
+                                    {% else %}
+                                        <span class="text-muted small">&mdash;</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-end pe-4">
+                                    <a href="{{ url_for('evaluate_submission', id=sub.id) }}" class="btn btn-sm btn-primary-custom">
+                                        <i class="fa-solid fa-clipboard-check me-1"></i> {% if sub.status == 'Evaluated' %}Edit Grade{% else %}Evaluate{% endif %}
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center py-5 text-muted">
+                                <p class="mb-2"><i class="fa-solid fa-inbox fa-2x"></i></p>
+                                No student submissions received for your assignments yet.
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

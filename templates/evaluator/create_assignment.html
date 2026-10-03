@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Assignment - Evaluator Portal{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a href="{{ url_for('evaluator_assignments') }}" class="text-decoration-none text-muted">
+        <i class="fa-solid fa-arrow-left me-1"></i> Back to Assignments
+    </a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card card-custom border-0 shadow-sm">
+            <div class="card-header bg-white py-3 border-0">
+                <h3 class="fw-bold text-dark mb-0">
+                    <i class="fa-solid fa-square-plus text-primary me-2"></i> Create OpenSearch Assignment
+                </h3>
+                <p class="text-muted small mb-0">Define assignment instructions, topic category, total marks, and submission deadline.</p>
+            </div>
+            
+            <div class="card-body p-4">
+                <form method="POST" action="{{ url_for('create_assignment') }}">
+                    <div class="mb-3">
+                        <label for="title" class="form-label fw-semibold">Assignment Title</label>
+                        <input type="text" class="form-control" id="title" name="title" placeholder="e.g. OpenSearch Query DSL & Aggregations Lab" required>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="topic" class="form-label fw-semibold">OpenSearch Topic</label>
+                            <select class="form-select" id="topic" name="topic" required>
+                                <option value="" disabled selected>Select an OpenSearch topic</option>
+                                {% for t in topics %}
+                                    <option value="{{ t }}">{{ t }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label for="total_marks" class="form-label fw-semibold">Total Marks</label>
+                            <input type="number" step="0.5" min="1" class="form-control" id="total_marks" name="total_marks" placeholder="e.g. 100" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="description" class="form-label fw-semibold">Short Description</label>
+                        <input type="text" class="form-control" id="description" name="description" placeholder="Brief summary of what this assignment covers" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="instructions" class="form-label fw-semibold">Detailed Instructions & Problem Statement</label>
+                        <textarea class="form-control" id="instructions" name="instructions" rows="6" placeholder="Provide step-by-step instructions, JSON code structures, or questions for students..." required></textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="deadline" class="form-label fw-semibold">Submission Deadline</label>
+                        <input type="datetime-local" class="form-control" id="deadline" name="deadline" required>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a href="{{ url_for('evaluator_assignments') }}" class="btn btn-light px-4">Cancel</a>
+                        <button type="submit" class="btn btn-brand px-4">
+                            <i class="fa-solid fa-check me-2"></i> Save & Publish Assignment
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

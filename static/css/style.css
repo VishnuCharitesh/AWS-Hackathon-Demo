@@ -1,0 +1,217 @@
+/* OpenSearch Evaluation Portal Custom Styling */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --primary-color: #2563eb;
+    --primary-hover: #1d4ed8;
+    --secondary-color: #0f172a;
+    --accent-color: #06b6d4;
+    --bg-light: #f8fafc;
+    --card-bg: #ffffff;
+    --border-color: #e2e8f0;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --gradient-brand: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #06b6d4 100%);
+    --gradient-card: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.9) 100%);
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--bg-light);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+/* Navbar Styling */
+.navbar-custom {
+    background: var(--gradient-brand);
+    box-shadow: 0 4px 20px rgba(30, 58, 138, 0.15);
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.35rem;
+    letter-spacing: -0.5px;
+}
+
+.navbar-brand i {
+    color: #38bdf8;
+}
+
+.nav-link {
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border-radius: 6px;
+    padding: 0.5rem 0.85rem !important;
+}
+
+.nav-link:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.nav-link.active {
+    background: rgba(255, 255, 255, 0.2) !important;
+    font-weight: 600;
+}
+
+/* Glassmorphism & Custom Cards */
+.card-custom {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-custom:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+.stat-card {
+    border-left: 4px solid var(--primary-color);
+}
+
+.stat-card.stat-success {
+    border-left-color: #10b981;
+}
+
+.stat-card.stat-warning {
+    border-left-color: #f59e0b;
+}
+
+.stat-card.stat-info {
+    border-left-color: #06b6d4;
+}
+
+.stat-card.stat-purple {
+    border-left-color: #8b5cf6;
+}
+
+/* Auth Pages Styling */
+.auth-wrapper {
+    min-height: calc(100vh - 160px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth-card {
+    max-width: 460px;
+    width: 100%;
+    border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
+}
+
+.auth-header {
+    background: var(--gradient-brand);
+    color: white;
+    border-radius: 16px 16px 0 0;
+    padding: 2rem;
+    text-align: center;
+}
+
+/* Form Styling */
+.form-control, .form-select {
+    border-radius: 8px;
+    padding: 0.65rem 1rem;
+    border: 1px solid #cbd5e1;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+}
+
+/* Button Customization */
+.btn-primary-custom {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+    font-weight: 600;
+    padding: 0.6rem 1.25rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.btn-primary-custom:hover {
+    background: var(--primary-hover);
+    border-color: var(--primary-hover);
+    color: white;
+    transform: translateY(-1px);
+}
+
+.btn-brand {
+    background: var(--gradient-brand);
+    color: white;
+    font-weight: 600;
+    border: none;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.btn-brand:hover {
+    color: white;
+    opacity: 0.95;
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+}
+
+/* Badges */
+.badge-topic {
+    background-color: #e0f2fe;
+    color: #0369a1;
+    font-weight: 600;
+    padding: 0.4em 0.75em;
+    border-radius: 6px;
+}
+
+.badge-evaluated {
+    background-color: #d1fae5;
+    color: #047857;
+    font-weight: 600;
+}
+
+.badge-pending {
+    background-color: #fef3c7;
+    color: #b45309;
+    font-weight: 600;
+}
+
+.badge-role-admin {
+    background-color: #fce7f3;
+    color: #be185d;
+}
+
+.badge-role-evaluator {
+    background-color: #ede9fe;
+    color: #6d28d9;
+}
+
+.badge-role-student {
+    background-color: #e0e7ff;
+    color: #4338ca;
+}
+
+/* Code Snippet Box for OpenSearch Code/Queries */
+.code-preview {
+    background-color: #0f172a;
+    color: #f8fafc;
+    border-radius: 8px;
+    padding: 1rem;
+    font-family: 'Fira Code', 'Courier New', monospace;
+    font-size: 0.9rem;
+    overflow-x: auto;
+}
+
+/* Footer */
+footer {
+    background: #0f172a;
+    color: #94a3b8;
+    padding: 1.5rem 0;
+    font-size: 0.9rem;
+}

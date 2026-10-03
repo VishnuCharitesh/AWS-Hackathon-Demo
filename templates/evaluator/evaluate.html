@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block title %}Evaluate Submission - {{ submission.student.username }}{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a href="{{ url_for('evaluator_submissions') }}" class="text-decoration-none text-muted">
+        <i class="fa-solid fa-arrow-left me-1"></i> Back to Submissions
+    </a>
+</div>
+
+<div class="row g-4">
+    <!-- Left Column: Student Answer -->
+    <div class="col-lg-7">
+        <div class="card card-custom border-0 shadow-sm h-100">
+            <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="badge badge-topic me-2">{{ submission.assignment.topic }}</span>
+                    <h4 class="fw-bold text-dark d-inline mb-0">{{ submission.assignment.title }}</h4>
+                </div>
+                <span class="badge bg-secondary">Total: {{ submission.assignment.total_marks }} Marks</span>
+            </div>
+            
+            <div class="card-body">
+                <div class="p-3 bg-light rounded-3 mb-3 border">
+                    <div class="row small text-muted">
+                        <div class="col-6"><strong>Student:</strong> {{ submission.student.username }} ({{ submission.student.email }})</div>
+                        <div class="col-6 text-end"><strong>Submitted At:</strong> {{ submission.submitted_at.strftime('%b %d, %Y %H:%M') }}</div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <h6 class="fw-bold text-dark"><i class="fa-solid fa-circle-info text-primary me-1"></i> Assignment Instructions:</h6>
+                    <p class="text-muted small" style="white-space: pre-line;">{{ submission.assignment.instructions }}</p>
+                </div>
+
+                <div class="mb-3">
+                    <h6 class="fw-bold text-dark"><i class="fa-solid fa-code text-success me-1"></i> Student's Answer Code / Response:</h6>
+                    <pre class="code-preview" style="max-height: 420px; overflow-y: auto;">{{ submission.answer_text }}</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Evaluation Grading Form -->
+    <div class="col-lg-5">
+        <div class="card card-custom border-0 shadow-sm">
+            <div class="card-header bg-white py-3 border-0">
+                <h4 class="fw-bold text-dark mb-0">
+                    <i class="fa-solid fa-square-poll-vertical text-warning me-2"></i> Evaluation & Marks
+                </h4>
+                <p class="text-muted small mb-0">Assign score and write feedback for student.</p>
+            </div>
+            
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('evaluate_submission', id=submission.id) }}" id="evalForm">
+                    <div class="mb-3">
+                        <label for="score" class="form-label fw-semibold">
+                            Score (Out of {{ submission.assignment.total_marks }})
+                        </label>
+                        <input type="number" step="0.5" min="0" max="{{ submission.assignment.total_marks }}" 
+                               class="form-control form-control-lg fw-bold" id="score" name="score" 
+                               placeholder="e.g. 45" 
+                               value="{% if evaluation %}{{ evaluation.score }}{% endif %}" 
+                               oninput="updatePercentage()" required>
+                        <div class="form-text">Score must not exceed {{ submission.assignment.total_marks }} marks.</div>
+                    </div>
+
+                    <!-- Live Percentage Box -->
+                    <div class="p-3 bg-light rounded-3 mb-3 border text-center">
+                        <small class="text-muted text-uppercase d-block fw-semibold mb-1">Calculated Percentage</small>
+                        <div class="h2 fw-bold text-primary mb-0" id="percentDisplay">
+                            {% if evaluation %}{{ evaluation.percentage }}%{% else %}0%{% endif %}
+                        </div>
+                        <small class="text-muted" id="percentFormula">
+                            formula: (score / {{ submission.assignment.total_marks }}) &times; 100
+                        </small>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="feedback" class="form-label fw-semibold">Evaluator Feedback</label>
+                        <textarea class="form-control" id="feedback" name="feedback" rows="5" 
+                                  placeholder="Provide constructive feedback, highlight errors, or comment on OpenSearch query correctness..." required>{% if evaluation %}{{ evaluation.feedback }}{% endif %}</textarea>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-brand py-2">
+                            <i class="fa-solid fa-floppy-disk me-2"></i> Submit Evaluation & Grade
+                        </button>
+                        <a href="{{ url_for('evaluator_submissions') }}" class="btn btn-light">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function updatePercentage() {
+    const totalMarks = {{ submission.assignment.total_marks }};
+    const scoreInput = document.getElementById('score');
+    const display = document.getElementById('percentDisplay');
+    let val = parseFloat(scoreInput.value);
+
+    if (isNaN(val) || val < 0) {
+        display.innerText = '0%';
+        return;
+    }
+
+    if (val > totalMarks) {
+        scoreInput.setCustomValidity('Score cannot exceed total marks (' + totalMarks + ')');
+    } else {
+        scoreInput.setCustomValidity('');
+    }
+
+    let pct = ((val / totalMarks) * 100).toFixed(2);
+    display.innerText = pct + '%';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    updatePercentage();
+});
+</script>
+{% endblock %}

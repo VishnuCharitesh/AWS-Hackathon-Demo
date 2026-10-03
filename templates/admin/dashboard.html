@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard - OpenSearch Portal{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-1">Admin Dashboard</h2>
+        <p class="text-muted mb-0">System-wide metrics, user administration, assignments, and real-time audit logs.</p>
+    </div>
+    <a href="{{ url_for('admin_logs') }}" class="btn btn-outline-primary btn-sm">
+        <i class="fa-solid fa-clock-rotate-left me-1"></i> View Full Audit Log
+    </a>
+</div>
+
+<!-- Admin Stat Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4 col-lg-2">
+        <div class="card card-custom stat-card stat-purple p-3">
+            <span class="text-muted small fw-medium">Total Users</span>
+            <h3 class="fw-bold text-dark mt-1 mb-0">{{ total_users }}</h3>
+        </div>
+    </div>
+    <div class="col-md-4 col-lg-2">
+        <div class="card card-custom stat-card p-3">
+            <span class="text-muted small fw-medium">Students</span>
+            <h3 class="fw-bold text-dark mt-1 mb-0">{{ student_count }}</h3>
+        </div>
+    </div>
+    <div class="col-md-4 col-lg-2">
+        <div class="card card-custom stat-card stat-info p-3">
+            <span class="text-muted small fw-medium">Evaluators</span>
+            <h3 class="fw-bold text-dark mt-1 mb-0">{{ evaluator_count }}</h3>
+        </div>
+    </div>
+    <div class="col-md-4 col-lg-2">
+        <div class="card card-custom stat-card stat-warning p-3">
+            <span class="text-muted small fw-medium">Assignments</span>
+            <h3 class="fw-bold text-dark mt-1 mb-0">{{ total_assignments }}</h3>
+        </div>
+    </div>
+    <div class="col-md-4 col-lg-2">
+        <div class="card card-custom stat-card stat-success p-3">
+            <span class="text-muted small fw-medium">Submissions</span>
+            <h3 class="fw-bold text-dark mt-1 mb-0">{{ total_submissions }}</h3>
+        </div>
+    </div>
+    <div class="col-md-4 col-lg-2">
+        <div class="card card-custom stat-card stat-success p-3" style="border-left-color: #059669;">
+            <span class="text-muted small fw-medium">Evaluated</span>
+            <h3 class="fw-bold text-dark mt-1 mb-0">{{ evaluated_submissions }}</h3>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content Grid -->
+<div class="row g-4">
+    <!-- Left Column: Real-time Live Activity Logs -->
+    <div class="col-lg-7">
+        <div class="card card-custom border-0 shadow-sm h-100">
+            <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+                <h5 class="fw-bold text-dark mb-0">
+                    <i class="fa-solid fa-list-check text-primary me-2"></i> Real-time Activity Stream
+                </h5>
+                <span class="badge bg-success bg-opacity-10 text-success"><i class="fa-solid fa-circle fa-xs me-1"></i> Live Input Logs</span>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-4">Time</th>
+                                <th>User</th>
+                                <th>Action</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if recent_logs %}
+                                {% for log in recent_logs %}
+                                    <tr>
+                                        <td class="ps-4"><small class="text-muted">{{ log.timestamp.strftime('%H:%M:%S') }}</small></td>
+                                        <td>
+                                            <strong class="text-dark">{{ log.username }}</strong>
+                                            <small class="text-muted d-block">({{ log.role }})</small>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-light text-dark border">{{ log.action }}</span>
+                                        </td>
+                                        <td><small class="text-secondary">{{ log.details[:50] }}{% if log.details|length > 50 %}...{% endif %}</small></td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="4" class="text-center py-4 text-muted">No activity logs recorded yet. Perform actions to see live real-time logs.</td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: User Overview & Quick Admin Tools -->
+    <div class="col-lg-5">
+        <div class="card card-custom border-0 shadow-sm mb-4">
+            <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+                <h5 class="fw-bold text-dark mb-0">
+                    <i class="fa-solid fa-users text-info me-2"></i> Recent Users
+                </h5>
+                <a href="{{ url_for('admin_users') }}" class="btn btn-sm btn-outline-secondary">View All</a>
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    {% for u in recent_users %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center py-2 px-3">
+                            <div>
+                                <strong class="text-dark">{{ u.username }}</strong>
+                                <small class="text-muted d-block">{{ u.email }}</small>
+                            </div>
+                            <span class="badge 
+                                {% if u.role == 'admin' %}badge-role-admin
+                                {% elif u.role == 'evaluator' %}badge-role-evaluator
+                                {% else %}badge-role-student{% endif %}">
+                                {{ u.role.capitalize() }}
+                            </span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="card card-custom border-0 shadow-sm">
+            <div class="card-header bg-white py-3 border-0">
+                <h5 class="fw-bold text-dark mb-0">
+                    <i class="fa-solid fa-screwdriver-wrench text-warning me-2"></i> Quick Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('admin_users') }}" class="btn btn-outline-primary text-start p-2">
+                        <i class="fa-solid fa-users me-2"></i> <strong>User Directory</strong>
+                    </a>
+                    <a href="{{ url_for('admin_assignments') }}" class="btn btn-outline-info text-start p-2">
+                        <i class="fa-solid fa-book-open me-2"></i> <strong>All System Assignments</strong>
+                    </a>
+                    <a href="{{ url_for('admin_submissions') }}" class="btn btn-outline-success text-start p-2">
+                        <i class="fa-solid fa-file-lines me-2"></i> <strong>All Submissions</strong>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}Submit Answer - {{ assignment.title }}{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a href="{{ url_for('student_assignments') }}" class="text-decoration-none text-muted">
+        <i class="fa-solid fa-arrow-left me-1"></i> Back to Assignments
+    </a>
+</div>
+
+<div class="row g-4">
+    <!-- Left Column: Instructions -->
+    <div class="col-lg-5">
+        <div class="card card-custom border-0 shadow-sm h-100">
+            <div class="card-header bg-white py-3 border-0">
+                <span class="badge badge-topic mb-2"><i class="fa-solid fa-tag me-1"></i> {{ assignment.topic }}</span>
+                <h3 class="fw-bold text-dark mb-1">{{ assignment.title }}</h3>
+                <p class="text-muted small mb-0">{{ assignment.description }}</p>
+            </div>
+            
+            <div class="card-body">
+                <div class="mb-4">
+                    <h6 class="fw-bold text-dark"><i class="fa-solid fa-list-ol text-primary me-2"></i> Instructions:</h6>
+                    <div class="p-3 bg-light rounded-3 text-secondary small" style="white-space: pre-line; line-height: 1.6;">
+                        {{ assignment.instructions }}
+                    </div>
+                </div>
+
+                <div class="row g-2 border-top pt-3">
+                    <div class="col-6">
+                        <small class="text-muted d-block">Total Marks:</small>
+                        <strong class="text-dark fs-5">{{ assignment.total_marks }} pts</strong>
+                    </div>
+                    <div class="col-6">
+                        <small class="text-muted d-block">Deadline:</small>
+                        <strong class="text-dark fs-6">{{ assignment.deadline.strftime('%b %d, %Y %H:%M') }}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Submission Form -->
+    <div class="col-lg-7">
+        <div class="card card-custom border-0 shadow-sm">
+            <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+                <h4 class="fw-bold text-dark mb-0">
+                    <i class="fa-solid fa-code text-success me-2"></i> Your Answer
+                </h4>
+                {% if submission %}
+                    {% if submission.status == 'Evaluated' %}
+                        <span class="badge badge-evaluated"><i class="fa-solid fa-lock me-1"></i> Evaluated (Locked)</span>
+                    {% else %}
+                        <span class="badge badge-pending"><i class="fa-solid fa-pen me-1"></i> Editing Draft</span>
+                    {% endif %}
+                {% endif %}
+            </div>
+            <div class="card-body">
+                {% if submission and submission.status == 'Evaluated' %}
+                    <div class="alert alert-info">
+                        <i class="fa-solid fa-circle-info me-2"></i> This submission has been evaluated and is now locked for editing.
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Submitted Solution:</label>
+                        <pre class="code-preview mb-0">{{ submission.answer_text }}</pre>
+                    </div>
+                {% else %}
+                    <form method="POST" action="{{ url_for('student_submit', id=assignment.id) }}">
+                        <div class="mb-3">
+                            <label for="answer_text" class="form-label fw-semibold">
+                                Provide your OpenSearch queries, API requests, or solution text below:
+                            </label>
+                            <textarea class="form-control font-monospace" id="answer_text" name="answer_text" rows="12" 
+                                      placeholder="e.g.&#10;PUT /my_opensearch_index&#10;{&#10;  'mappings': { ... }&#10;}" required>{% if submission %}{{ submission.answer_text }}{% endif %}</textarea>
+                            <div class="form-text">Tip: You can paste JSON request payloads, Query DSL blocks, or explanation text.</div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a href="{{ url_for('student_assignments') }}" class="btn btn-light px-4">Cancel</a>
+                            <button type="submit" class="btn btn-brand px-4">
+                                <i class="fa-solid fa-paper-plane me-2"></i> {% if submission %}Update Submission{% else %}Submit Assignment{% endif %}
+                            </button>
+                        </div>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

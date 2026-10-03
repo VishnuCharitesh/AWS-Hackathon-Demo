@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}Realtime Audit Logs - Admin Portal{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-1"><i class="fa-solid fa-clock-rotate-left text-primary me-2"></i> Realtime Audit Logs</h2>
+        <p class="text-muted mb-0">Live sequence of user logins, submissions, evaluations, and administrative events.</p>
+    </div>
+    <a href="{{ url_for('admin_logs') }}" class="btn btn-outline-secondary btn-sm">
+        <i class="fa-solid fa-arrows-rotate me-1"></i> Refresh Logs
+    </a>
+</div>
+
+<div class="card card-custom border-0 shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Timestamp</th>
+                        <th>User</th>
+                        <th>Role</th>
+                        <th>Action</th>
+                        <th>Details</th>
+                        <th class="text-end pe-4">IP Address</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if logs %}
+                        {% for log in logs %}
+                            <tr>
+                                <td class="ps-4">
+                                    <small class="text-muted fw-mono">{{ log.timestamp.strftime('%Y-%m-%d %H:%M:%S UTC') }}</small>
+                                </td>
+                                <td><strong class="text-dark">{{ log.username }}</strong></td>
+                                <td>
+                                    <span class="badge 
+                                        {% if log.role == 'admin' %}badge-role-admin
+                                        {% elif log.role == 'evaluator' %}badge-role-evaluator
+                                        {% elif log.role == 'student' %}badge-role-student
+                                        {% else %}bg-secondary{% endif %}">
+                                        {{ log.role.capitalize() }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="fw-semibold 
+                                        {% if 'Created' in log.action or 'Registered' in log.action %}text-success
+                                        {% elif 'Evaluated' in log.action %}text-primary
+                                        {% elif 'Deleted' in log.action %}text-danger
+                                        {% else %}text-secondary{% endif %}">
+                                        {{ log.action }}
+                                    </span>
+                                </td>
+                                <td><small class="text-dark">{{ log.details }}</small></td>
+                                <td class="text-end pe-4"><small class="text-muted font-monospace">{{ log.ip_address }}</small></td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-muted">No audit logs recorded yet.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

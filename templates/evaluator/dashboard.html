@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block title %}Evaluator Dashboard - OpenSearch Portal{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-1">Evaluator Dashboard</h2>
+        <p class="text-muted mb-0">Manage OpenSearch assignments, evaluate student submissions, and provide scores & feedback.</p>
+    </div>
+    <a href="{{ url_for('create_assignment') }}" class="btn btn-brand">
+        <i class="fa-solid fa-plus me-2"></i> Create New Assignment
+    </a>
+</div>
+
+<!-- Stat Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card card-custom stat-card p-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="text-muted fw-medium">My Created Assignments</span>
+                    <h2 class="fw-bold text-dark mt-2 mb-0">{{ total_assignments }}</h2>
+                </div>
+                <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-circle">
+                    <i class="fa-solid fa-folder-plus fa-xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card card-custom stat-card stat-warning p-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="text-muted fw-medium">Pending Evaluations</span>
+                    <h2 class="fw-bold text-dark mt-2 mb-0">{{ pending_evals }}</h2>
+                </div>
+                <div class="bg-warning bg-opacity-10 text-warning p-3 rounded-circle">
+                    <i class="fa-solid fa-hourglass-half fa-xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card card-custom stat-card stat-success p-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="text-muted fw-medium">Completed Evaluations</span>
+                    <h2 class="fw-bold text-dark mt-2 mb-0">{{ completed_evals }}</h2>
+                </div>
+                <div class="bg-success bg-opacity-10 text-success p-3 rounded-circle">
+                    <i class="fa-solid fa-check-to-slot fa-xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Submissions Requiring Evaluation -->
+<div class="card card-custom border-0 shadow-sm">
+    <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+        <h5 class="fw-bold mb-0 text-dark">
+            <i class="fa-solid fa-clock-rotate-left text-warning me-2"></i> Recent Student Submissions
+        </h5>
+        <a href="{{ url_for('evaluator_submissions') }}" class="btn btn-sm btn-outline-secondary">View All</a>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Student</th>
+                        <th>Assignment</th>
+                        <th>Topic</th>
+                        <th>Submitted Date</th>
+                        <th>Status</th>
+                        <th class="text-end pe-4">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if recent_submissions %}
+                        {% for sub in recent_submissions %}
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="fw-bold text-dark">{{ sub.student.username }}</div>
+                                    <small class="text-muted">{{ sub.student.email }}</small>
+                                </td>
+                                <td><span class="fw-semibold">{{ sub.assignment.title }}</span></td>
+                                <td><span class="badge badge-topic">{{ sub.assignment.topic }}</span></td>
+                                <td><small class="text-muted">{{ sub.submitted_at.strftime('%b %d, %Y %H:%M') }}</small></td>
+                                <td>
+                                    {% if sub.status == 'Evaluated' %}
+                                        <span class="badge badge-evaluated"><i class="fa-solid fa-check me-1"></i> Evaluated</span>
+                                    {% else %}
+                                        <span class="badge badge-pending"><i class="fa-solid fa-clock me-1"></i> Needs Review</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-end pe-4">
+                                    <a href="{{ url_for('evaluate_submission', id=sub.id) }}" class="btn btn-sm btn-primary-custom">
+                                        <i class="fa-solid fa-pen-nib me-1"></i> {% if sub.status == 'Evaluated' %}Edit Score{% else %}Evaluate{% endif %}
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-muted">No student submissions received yet.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

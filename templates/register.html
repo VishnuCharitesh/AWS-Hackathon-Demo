@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}Register - OpenSearch Evaluation Portal{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper py-4">
+    <div class="card card-custom auth-card border-0 overflow-hidden">
+        <div class="auth-header text-center">
+            <div class="mb-2">
+                <i class="fa-solid fa-user-plus fa-3x text-info"></i>
+            </div>
+            <h3 class="fw-bold mb-1">Create Account</h3>
+            <p class="mb-0 text-white-50">Join the OpenSearch Evaluation Portal</p>
+        </div>
+        
+        <div class="card-body p-4">
+            <form method="POST" action="{{ url_for('register') }}">
+                <div class="mb-3">
+                    <label for="username" class="form-label fw-semibold">Username</label>
+                    <input type="text" class="form-control" id="username" name="username" placeholder="Choose a username" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="email" class="form-label fw-semibold">Email Address</label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="role" class="form-label fw-semibold">Select Role</label>
+                    <select class="form-select" id="role" name="role">
+                        <option value="student" selected>Student</option>
+                        <option value="evaluator">Evaluator</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label fw-semibold">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Create password" required>
+                </div>
+
+                <div class="mb-4">
+                    <label for="confirm_password" class="form-label fw-semibold">Confirm Password</label>
+                    <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Confirm password" required>
+                </div>
+
+                <button type="submit" class="btn btn-brand w-100 py-2 mb-3">
+                    <i class="fa-solid fa-user-check me-2"></i> Complete Registration
+                </button>
+            </form>
+
+            <div class="text-center">
+                <span class="text-muted">Already registered?</span>
+                <a href="{{ url_for('login') }}" class="text-primary fw-semibold text-decoration-none">Log in here</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

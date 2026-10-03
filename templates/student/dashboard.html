@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Dashboard - OpenSearch Portal{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-1">Student Dashboard</h2>
+        <p class="text-muted mb-0">Welcome back, <strong>{{ current_user.username }}</strong>! Track your assignments and evaluation results.</p>
+    </div>
+    <a href="{{ url_for('student_assignments') }}" class="btn btn-primary-custom">
+        <i class="fa-solid fa-list-check me-2"></i> View All Assignments
+    </a>
+</div>
+
+<!-- Stat Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card card-custom stat-card p-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="text-muted fw-medium">Available Assignments</span>
+                    <h2 class="fw-bold text-dark mt-2 mb-0">{{ total_assignments }}</h2>
+                </div>
+                <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-circle">
+                    <i class="fa-solid fa-book fa-xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card card-custom stat-card stat-warning p-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="text-muted fw-medium">Submissions Made</span>
+                    <h2 class="fw-bold text-dark mt-2 mb-0">{{ submitted_count }}</h2>
+                </div>
+                <div class="bg-warning bg-opacity-10 text-warning p-3 rounded-circle">
+                    <i class="fa-solid fa-paper-plane fa-xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card card-custom stat-card stat-success p-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="text-muted fw-medium">Evaluated Submissions</span>
+                    <h2 class="fw-bold text-dark mt-2 mb-0">{{ evaluated_count }}</h2>
+                </div>
+                <div class="bg-success bg-opacity-10 text-success p-3 rounded-circle">
+                    <i class="fa-solid fa-award fa-xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Assignments Table -->
+<div class="card card-custom border-0 shadow-sm">
+    <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+        <h5 class="fw-bold mb-0 text-dark">
+            <i class="fa-solid fa-layer-group text-primary me-2"></i> Recent OpenSearch Assignments
+        </h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Title</th>
+                        <th>Topic</th>
+                        <th>Total Marks</th>
+                        <th>Deadline</th>
+                        <th>Status</th>
+                        <th class="text-end pe-4">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if recent_assignments %}
+                        {% for a in recent_assignments %}
+                            {% set sub = sub_map.get(a.id) %}
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="fw-bold text-dark">{{ a.title }}</div>
+                                    <small class="text-muted">{{ a.description[:60] }}...</small>
+                                </td>
+                                <td>
+                                    <span class="badge badge-topic">
+                                        <i class="fa-solid fa-tag me-1"></i> {{ a.topic }}
+                                    </span>
+                                </td>
+                                <td><span class="fw-semibold text-secondary">{{ a.total_marks }} pts</span></td>
+                                <td><small class="text-muted">{{ a.deadline.strftime('%b %d, %Y %H:%M') }}</small></td>
+                                <td>
+                                    {% if sub %}
+                                        {% if sub.status == 'Evaluated' %}
+                                            <span class="badge badge-evaluated"><i class="fa-solid fa-check-double me-1"></i> Evaluated</span>
+                                        {% else %}
+                                            <span class="badge badge-pending"><i class="fa-solid fa-clock me-1"></i> Submitted</span>
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="badge bg-secondary"><i class="fa-solid fa-circle-notch me-1"></i> Not Submitted</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-end pe-4">
+                                    {% if sub and sub.status == 'Evaluated' %}
+                                        <a href="{{ url_for('student_results') }}" class="btn btn-sm btn-outline-success">
+                                            <i class="fa-solid fa-eye me-1"></i> View Result
+                                        </a>
+                                    {% else %}
+                                        <a href="{{ url_for('student_submit', id=a.id) }}" class="btn btn-sm btn-primary-custom">
+                                            <i class="fa-solid fa-pen-to-square me-1"></i> {% if sub %}Edit Answer{% else %}Submit Answer{% endif %}
+                                        </a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-muted">No assignments available yet.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block title %}My Results - Student Portal{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-1">My Evaluation Results</h2>
+        <p class="text-muted mb-0">View scores, feedback, and calculated percentages for your submitted OpenSearch assignments.</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    {% if submissions %}
+        {% for s in submissions %}
+            <div class="col-12">
+                <div class="card card-custom border-0 shadow-sm">
+                    <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div>
+                            <span class="badge badge-topic me-2">{{ s.assignment.topic }}</span>
+                            <h4 class="fw-bold text-dark d-inline-block mb-0 align-middle">{{ s.assignment.title }}</h4>
+                        </div>
+                        <div>
+                            {% if s.status == 'Evaluated' %}
+                                <span class="badge badge-evaluated px-3 py-2 fs-6">
+                                    <i class="fa-solid fa-square-check me-1"></i> Score: {{ s.evaluation.score }} / {{ s.assignment.total_marks }} ({{ s.evaluation.percentage }}%)
+                                </span>
+                            {% else %}
+                                <span class="badge badge-pending px-3 py-2 fs-6">
+                                    <i class="fa-solid fa-clock me-1"></i> Evaluation Pending
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <h6 class="fw-bold text-muted small text-uppercase">Submission Details</h6>
+                                <p class="mb-1"><strong>Submitted On:</strong> {{ s.submitted_at.strftime('%b %d, %Y %H:%M') }}</p>
+                                <p class="mb-0"><strong>Total Max Marks:</strong> {{ s.assignment.total_marks }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                {% if s.status == 'Evaluated' %}
+                                    <h6 class="fw-bold text-muted small text-uppercase">Evaluator Information</h6>
+                                    <p class="mb-1"><strong>Evaluated By:</strong> {{ s.evaluation.evaluator.username }}</p>
+                                    <p class="mb-0"><strong>Evaluated On:</strong> {{ s.evaluation.evaluated_at.strftime('%b %d, %Y %H:%M') }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Progress Bar for Percentage -->
+                        {% if s.status == 'Evaluated' %}
+                            <div class="mb-4">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="small font-weight-bold">Performance Percentage:</span>
+                                    <span class="small font-weight-bold fw-bold 
+                                        {% if s.evaluation.percentage >= 80 %}text-success
+                                        {% elif s.evaluation.percentage >= 60 %}text-warning
+                                        {% else %}text-danger{% endif %}">
+                                        {{ s.evaluation.percentage }}%
+                                    </span>
+                                </div>
+                                <div class="progress" style="height: 10px;">
+                                    <div class="progress-bar 
+                                        {% if s.evaluation.percentage >= 80 %}bg-success
+                                        {% elif s.evaluation.percentage >= 60 %}bg-warning
+                                        {% else %}bg-danger{% endif %}" 
+                                        role="progressbar" 
+                                        style="width: {{ s.evaluation.percentage }}%;" 
+                                        aria-valuenow="{{ s.evaluation.percentage }}" 
+                                        aria-valuemin="0" 
+                                        aria-valuemax="100">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Feedback Alert Box -->
+                            <div class="alert alert-light border-start border-primary border-4 shadow-sm mb-4">
+                                <h6 class="fw-bold text-primary mb-2"><i class="fa-solid fa-comment-dots me-2"></i> Evaluator Feedback:</h6>
+                                <p class="mb-0 text-dark" style="white-space: pre-line;">{{ s.evaluation.feedback }}</p>
+                            </div>
+                        {% endif %}
+
+                        <!-- Answer Code Preview Collapse -->
+                        <div class="accordion" id="accordionAnswer{{ s.id }}">
+                            <div class="accordion-item border-0 bg-light rounded-3">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed bg-light rounded-3 text-dark fw-semibold py-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAnswer{{ s.id }}">
+                                        <i class="fa-solid fa-code me-2 text-secondary"></i> View Your Submitted Answer
+                                    </button>
+                                </h2>
+                                <div id="collapseAnswer{{ s.id }}" class="accordion-collapse collapse" data-bs-parent="#accordionAnswer{{ s.id }}">
+                                    <div class="accordion-body p-3">
+                                        <pre class="code-preview mb-0">{{ s.answer_text }}</pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-12 text-center py-5">
+            <i class="fa-solid fa-clipboard-check fa-3x text-muted mb-3"></i>
+            <h5 class="text-muted">You haven't submitted any assignments yet.</h5>
+            <a href="{{ url_for('student_assignments') }}" class="btn btn-primary-custom mt-2">Browse Assignments</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

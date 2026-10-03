@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - OpenSearch Evaluation Portal{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="card card-custom auth-card border-0 overflow-hidden">
+        <div class="auth-header text-center">
+            <div class="mb-2">
+                <i class="fa-solid fa-square-poll-vertical fa-3x text-info"></i>
+            </div>
+            <h3 class="fw-bold mb-1">OpenSearch Portal</h3>
+            <p class="mb-0 text-white-50">Sign in to your account</p>
+        </div>
+        
+        <div class="card-body p-4">
+            <form method="POST" action="{{ url_for('login') }}">
+                <div class="mb-3">
+                    <label for="username" class="form-label fw-semibold">Username</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light text-muted"><i class="fa-solid fa-user"></i></span>
+                        <input type="text" class="form-control" id="username" name="username" placeholder="Enter username" required autofocus>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="password" class="form-label fw-semibold">Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light text-muted"><i class="fa-solid fa-lock"></i></span>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-brand w-100 py-2 mb-3">
+                    <i class="fa-solid fa-right-to-bracket me-2"></i> Log In
+                </button>
+            </form>
+
+            <div class="text-center mb-3">
+                <span class="text-muted">Don't have an account?</span>
+                <a href="{{ url_for('register') }}" class="text-primary fw-semibold text-decoration-none">Register here</a>
+            </div>
+
+            <!-- Demo Quick Credentials Card -->
+            <div class="p-3 bg-light rounded-3 border">
+                <div class="d-flex align-items-center mb-2">
+                    <i class="fa-solid fa-key text-warning me-2"></i>
+                    <strong class="small text-dark">Demo Test Accounts:</strong>
+                </div>
+                <div class="row g-2 text-center small">
+                    <div class="col-4">
+                        <button type="button" onclick="fillCreds('student1', 'stud123')" class="btn btn-sm btn-outline-primary w-100 py-1">
+                            Student<br><small class="text-muted">student1</small>
+                        </button>
+                    </div>
+                    <div class="col-4">
+                        <button type="button" onclick="fillCreds('evaluator1', 'eval123')" class="btn btn-sm btn-outline-purple w-100 py-1" style="border-color: #8b5cf6; color: #8b5cf6;">
+                            Evaluator<br><small class="text-muted">evaluator1</small>
+                        </button>
+                    </div>
+                    <div class="col-4">
+                        <button type="button" onclick="fillCreds('admin', 'admin123')" class="btn btn-sm btn-outline-danger w-100 py-1">
+                            Admin<br><small class="text-muted">admin</small>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function fillCreds(u, p) {
+    document.getElementById('username').value = u;
+    document.getElementById('password').value = p;
+}
+</script>
+{% endblock %}

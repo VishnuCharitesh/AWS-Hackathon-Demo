@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}All Submissions - Admin Portal{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-1">System Submissions & Evaluations</h2>
+        <p class="text-muted mb-0">Audit all student submissions, evaluation scores, and feedback across the portal.</p>
+    </div>
+</div>
+
+<div class="card card-custom border-0 shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Student</th>
+                        <th>Assignment</th>
+                        <th>Topic</th>
+                        <th>Submitted Date</th>
+                        <th>Status</th>
+                        <th>Evaluator</th>
+                        <th>Score & %</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sub in submissions %}
+                        <tr>
+                            <td class="ps-4">
+                                <div class="fw-bold text-dark">{{ sub.student.username }}</div>
+                                <small class="text-muted">{{ sub.student.email }}</small>
+                            </td>
+                            <td>
+                                <div class="fw-semibold text-dark">{{ sub.assignment.title }}</div>
+                                <small class="text-muted">Max: {{ sub.assignment.total_marks }} pts</small>
+                            </td>
+                            <td><span class="badge badge-topic">{{ sub.assignment.topic }}</span></td>
+                            <td><small class="text-muted">{{ sub.submitted_at.strftime('%b %d, %Y %H:%M') }}</small></td>
+                            <td>
+                                {% if sub.status == 'Evaluated' %}
+                                    <span class="badge badge-evaluated"><i class="fa-solid fa-square-check me-1"></i> Evaluated</span>
+                                {% else %}
+                                    <span class="badge badge-pending"><i class="fa-solid fa-clock me-1"></i> Pending</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if sub.status == 'Evaluated' %}
+                                    <span class="fw-semibold text-secondary">{{ sub.evaluation.evaluator.username }}</span>
+                                {% else %}
+                                    <span class="text-muted small">&mdash;</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if sub.status == 'Evaluated' %}
+                                    <strong class="text-dark">{{ sub.evaluation.score }} / {{ sub.assignment.total_marks }}</strong>
+                                    <small class="text-success d-block fw-bold">({{ sub.evaluation.percentage }}%)</small>
+                                {% else %}
+                                    <span class="text-muted small">&mdash;</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
